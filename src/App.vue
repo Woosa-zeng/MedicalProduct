@@ -1,35 +1,21 @@
 <template>
   <div id="app" style="height: 100%;">
     <loading v-model="isLoading"></loading>
-    <div class="header">
-    </div>
-    <search
-      @result-click="resultClick"
-      @on-change="getResult"
-      :results="results"
-      v-model="value"
-      :autoFixed="false"
-      @on-focus="onFocus"
-      @on-cancel="onCancel"
-      ref="search"></search>
-    <div class="tab-layer">
-      <div class="tab-item">百科咨询</div>
-      <div class="tab-item">百科咨询</div>
-      <div class="tab-item">百科咨询</div>
-      <div class="tab-item">百科咨询</div>
-    </div>
     <div class="app-content">
       <router-view></router-view>
     </div>
   </div>
 </template>
 <script>
-import { Loading, Search } from 'vux'
+import { Loading } from 'vux'
 import { mapState } from 'vuex'
 export default {
+  data() {
+    return {
+    }
+  },
   components: {
-    Loading,
-    Search
+    Loading
   },
   computed: {
     ...mapState({
@@ -38,17 +24,19 @@ export default {
   },
   create() {
     console.log(this.isLoading)
+  },
+  methods: {
   }
 }
 </script>
 
 <style lang="less">
-@import url('./common/less/index.less');
 #app {
   font-family: "PingFang SC",Arial,sans-serif;
 }
 body {
   background-color: #eeeff3;
+  color: #333;
 }
 html, body {
   height: 100%;
@@ -61,14 +49,6 @@ html, body {
     line-height: 40px;
     text-align: center;
     color: #fff;
-  }
-}
-.tab-layer{
-  background: #fff;
-  display: flex;
-  .border-1px();
-  .tab-item{
-    flex: 1;
   }
 }
 .animated {
