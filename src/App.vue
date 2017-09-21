@@ -43,6 +43,11 @@ html, body {
   width: 100%;
   margin: 0;
   overflow-x: hidden;
+  ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
   .header{
     background: #333;
     height: 40px;
