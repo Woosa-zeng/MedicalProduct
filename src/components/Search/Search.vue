@@ -42,16 +42,16 @@
         <ul class="row">
           <li class="week cell" v-for="li in weekData">{{li.text}}</li>
         </ul>
-        <ul class="row">
-          <li class="time cell am active" v-for="li in amData">{{li.text}} <i class="icon iconfont icon-gou"></i></li>
+        <ul class="row" ref="am">
+          <li class="time cell am" @click="handleAm(li,index)" v-for="(li,index) in amData">{{li.text}} <i class="icon iconfont icon-gou"></i></li>
         </ul>
-        <ul class="row">
-          <li class="time cell pm" v-for="li in pmData">{{li.text}}</li>
+        <ul class="row" ref="pm">
+          <li class="time cell pm" @click="handlePm(li,index)" v-for="(li,index) in pmData">{{li.text}}<i class="icon iconfont icon-gou"></i></li>
         </ul>
       </div>
       <div class="btn-wrapper">
-        <div class="btn-cancel btn">取消</div>
-        <div class="btn-confirm btn">确定</div>
+        <div class="btn-cancel btn" @click="cancel">取消</div>
+        <div class="btn-confirm btn" @click="confirm">确定</div>
       </div>
     </div>
   </section>
@@ -87,6 +87,19 @@
 </template>
 <script type="text/ecmascript-6">
   import { Search } from 'vux'
+  function hasClass(ele, cName) {
+    return !!ele.className.match(new RegExp('(\\s|^)' + cName + '(\\s|$)'))
+  }
+  function addClass(ele, cName) {
+    if (!hasClass(ele, cName)) {
+      ele.className += ' ' + cName
+    }
+  }
+  function removeClass(ele, cName) {
+    if (hasClass(ele, cName)) {
+      ele.className = ele.className.replace(new RegExp('(\\s|^)' + cName + '(\\s|$)'), '')
+    }
+  }
   export default{
     data() {
       return {
@@ -253,11 +266,78 @@
             tag: '周五',
             text: '下午'
           }
-        ]
+        ],
+        selectAm: [],
+        selectPm: []
       }
     },
     created() {},
     methods: {
+      confirm() {
+        let am = this.selectAm
+        let pm = this.selectPm
+        let text = ''
+        for (let i = 0; i < am.length; i++) {
+          text += am[i].tag + am[i].text + ','
+        }
+        for (let i = 0; i < pm.length; i++) {
+          text += pm[i].tag + pm[i].text + ','
+        }
+        if (text.length < 1) {
+          alert(`请选择日期`)
+        } else {
+          alert(`您选择的日期有：${text.substr(0, text.length - 1)}`)
+        }
+        this.currentDropdown = -1
+      },
+      cancel() {
+        let am = this.$refs.am.getElementsByTagName('li')
+        let pm = this.$refs.pm.getElementsByTagName('li')
+        for (let i = 0; i < am.length; i++) {
+          removeClass(am[i], 'active')
+        }
+        for (let i = 0; i < pm.length; i++) {
+          removeClass(pm[i], 'active')
+        }
+        this.selectAm = []
+        this.selectPm = []
+        this.currentDropdown = -1
+      },
+      handleAm(item, index) {
+        let list = this.selectAm
+        let cell = this.$refs.am.getElementsByTagName('li')[index]
+        console.log(cell)
+        let flag = false
+        for (let i = 0; i < list.length; i++) {
+          if (list[i].tag === item.tag) {
+            list.splice(i, 1)
+            removeClass(cell, 'active')
+            flag = true
+          }
+        }
+        if (!flag) {
+          list.splice(list.length, 0, item)
+          addClass(cell, 'active')
+        }
+        this.selectAm = list
+      },
+      handlePm(item, index) {
+        let list = this.selectPm
+        let cell = this.$refs.pm.getElementsByTagName('li')[index]
+        let flag = false
+        for (let i = 0; i < list.length; i++) {
+          if (list[i].tag === item.tag) {
+            list.splice(i, 1)
+            removeClass(cell, 'active')
+            flag = true
+          }
+        }
+        if (!flag) {
+          list.splice(list.length, 0, item)
+          addClass(cell, 'active')
+        }
+        this.selectPm = list
+      },
       handleArea(text, index) {
         this.currentDropdown = -1
         this.dropdownList[0].title = text
@@ -359,12 +439,17 @@
       display: flex;
       .cell{
         flex: 1;
+        box-sizing: border-box;
         position: relative;
         line-height: 35px;
         text-align: center;
         over-flow: hidden;
         .icon-gou{
-          font-size: 0;
+          position: absolute;
+          right: -2px;
+          bottom: -9px;
+          font-size: 24px;
+          visibility: hidden;
         }
       }
       .week{
@@ -376,18 +461,19 @@
       .active{
         background: rgba(52, 84, 150, 0.14);
         border: 1px solid @base-blue;
-        .icon-gou{
-          position: absolute;
-          right: -2px;
-          bottom: -10px;
-          font-size: 24px;
-        }
       }
     }
   }
 }
 .layer-active{
   visibility: visible;
+  .time-layer{
+    .active{
+      .icon-gou{
+        visibility: visible !important;
+      }
+    }
+  }
 }
 .content{
   margin-top: 5px;
