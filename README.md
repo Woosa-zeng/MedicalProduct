@@ -1,4 +1,4 @@
-# sim_app
+# medical_app
 
 > medical_product_project
 
