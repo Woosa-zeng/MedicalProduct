@@ -9,7 +9,7 @@
       <div class="select-illness-wrapper" :class="{'active': active}" @click="selectIllness">
         <h2 class="select-title">选择病种</h2>
         <div class="arrow-img">
-          <span>{{illnessType}}</span>
+          <span class="ill-type">{{illnessType}}</span>
           <img src="./arrow.png" alt="" >
         </div>
       </div>
@@ -40,15 +40,16 @@
     </section>
   </div>
   <div class="btn-pay">立即支付10元</div>
-  <div class="popover">
-    <ul>
-      <li class="popover-list" v-for="li in illnessList">
-        {{li.title}}
-        <i class="icon iconfont icon-icon-big-gou"></i>
+  <div class="popover" :class="{'popover-active': active}">
+    <ul class="popover-layer">
+      <li class="popover-list" :class="{'popover-list-active': currentType === index}" v-for="(li,index) in illnessList" @click="selectIllnessType(index, li.title)">
+        <div class="item">
+          <span class="list-text">{{li.title}}</span>
+          <i class="icon iconfont icon-icon-big-gou"></i>
+        </div>
       </li>
     </ul>
   </div>
-
 </div>
 </template>
 <script type="text/ecmascript-6">
@@ -58,6 +59,7 @@
         doctorName: this.$store.state.doctor.substr(0, 1),
         num: 200,
         desc: '',
+        currentType: -1,
         active: false,
         illnessType: '',
         illnessList: [
@@ -92,6 +94,11 @@
     },
     created() {},
     methods: {
+      selectIllnessType(index, title) {
+        this.illnessType = title
+        this.currentType = index
+        this.active = false
+      },
       goNext() {
         this.$router.push({name: 'Search'})
       },
@@ -141,6 +148,9 @@
       font-size: 16px;
     }
     .arrow-img{
+      .ill-type{
+        margin-right: 10px;
+      }
       img{
         width: 16px;
         height: 9px;
@@ -207,12 +217,68 @@
     color: #fff;
   }
   .popover{
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     bottom: 0;
     width: 100%;
     height: 100%;
     z-index: 666;
-    background-color: rgba(20, 20, 20, 0.5);
+    background-color: rgba(20, 20, 20, 0.3);
+    transition: all 0.5s;
+    visibility: hidden;
+    .popover-layer{
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 0;
+      background: #fff;
+      transition: height 0.5s;
+      .popover-list{
+        &:last-child{
+          .item{
+            .border-none();
+          }
+         }
+      }
+      .item{
+        box-sizing: border-box;
+        margin: 0 15px;
+        display: flex;
+        height: 50px;
+        line-height: 50px;
+        color: #666;
+        .border-1px();
+         .list-text{
+           flex: 1;
+         }
+         .icon{
+           flex: 0 0 20px;
+           width: 20px;
+           visibility: hidden;
+         }
+      }
+    }
+  }
+  .popover-active{
+    visibility: visible;
+    transition: height 0.5s;
+    .popover-layer{
+      height: 350px;
+      transition: height 0.5s;
+      .popover-list-active{
+        background: #f4f4f4;
+        .item{
+          color: @base-blue;
+          .icon{
+            visibility: visible !important;
+          }
+        }
+      }
+    }
   }
 }
+
+
 </style>
