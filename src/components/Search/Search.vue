@@ -61,7 +61,7 @@
       <div class="nav-title-right"><i class="icon iconfont icon-icon"></i>筛选</div>
     </div>
     <ul class="item-wrapper">
-      <li class="list-item" v-for="li in contentList">
+      <li class="list-item" v-for="li in contentList" @click="quizDoctor(li.name)">
         <div class="list-item-left">
           <img src="./1_01.png" class="item-img">
         </div>
@@ -273,6 +273,10 @@
     },
     created() {},
     methods: {
+      quizDoctor(name) {
+        this.$store.commit('DOCTOR', {doctor: name})
+        this.$router.push({name: 'Quiz'})
+      },
       confirm() {
         let am = this.selectAm
         let pm = this.selectPm

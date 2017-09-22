@@ -48,6 +48,9 @@ html, body {
     padding: 0;
     list-style: none;
   }
+  .app-content{
+    height: 100%;
+  }
   .header{
     background: #333;
     height: 40px;

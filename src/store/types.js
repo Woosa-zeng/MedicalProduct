@@ -1,1 +1,1 @@
-
+export const DOCTOR = 'DOCTOR'
