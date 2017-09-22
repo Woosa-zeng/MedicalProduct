@@ -63,7 +63,7 @@
     <ul class="item-wrapper">
       <li class="list-item" v-for="li in contentList" @click="quizDoctor(li.name)">
         <div class="list-item-left">
-          <img src="./1_01.png" class="item-img">
+          <img :src="li.url" class="item-img">
         </div>
         <div class="list-item-right">
           <div class="item-title-wrapper">
@@ -132,7 +132,7 @@
         ], // 下拉层title
         contentList: [
           {
-            url: './1_01.png',
+            url: 'https://raw.githubusercontent.com/Woosa-zeng/MedicalProduct/master/src/components/Search/1_01.png',
             name: '赵可欣',
             title: '主任医生',
             tag: 1,
@@ -142,7 +142,7 @@
             des: '乳腺肿瘤'
           },
           {
-            url: './1_02.png',
+            url: 'https://raw.githubusercontent.com/Woosa-zeng/MedicalProduct/master/src/components/Search/1_02.png',
             name: '韩大生',
             title: '主任医生',
             tag: 0,
@@ -152,7 +152,7 @@
             des: '乳腺肿瘤'
           },
           {
-            url: './1_03.png',
+            url: 'https://raw.githubusercontent.com/Woosa-zeng/MedicalProduct/master/src/components/Search/1_03.png',
             name: '陈淑',
             title: '主任医生',
             tag: 1,
