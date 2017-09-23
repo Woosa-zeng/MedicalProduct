@@ -40,9 +40,9 @@
     </section>
   </div>
   <div class="btn-pay">立即支付10元</div>
-  <div class="popover" :class="{'popover-active': active}">
+  <div class="popover" :class="{'popover-active': active}" @click.self="selectIllnessType(-1,'')">
     <ul class="popover-layer">
-      <li class="popover-list" :class="{'popover-list-active': currentType === index}" v-for="(li,index) in illnessList" @click="selectIllnessType(index, li.title)">
+      <li class="popover-list" :class="{'popover-list-active': currentType === index}" v-for="(li,index) in illnessList" @click.stop="selectIllnessType(index, li.title)">
         <div class="item">
           <span class="list-text">{{li.title}}</span>
           <i class="icon iconfont icon-icon-big-gou"></i>
@@ -111,6 +111,7 @@
 <style lang="less" rel="stylesheet/less" scope>
   @import url('../../common/less/index.less');
 .quiz{
+  position: relative;
   height: 100%;
   background: #fff;
   .title{
@@ -217,13 +218,11 @@
     color: #fff;
   }
   .popover{
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100%;
-    height: 100%;
     z-index: 666;
     background-color: rgba(20, 20, 20, 0.3);
     transition: all 0.5s;
@@ -236,6 +235,7 @@
       background: #fff;
       transition: height 0.5s;
       .popover-list{
+        box-sizing: border-box;
         &:last-child{
           .item{
             .border-none();

@@ -6,7 +6,13 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     isLoading: false,
-    doctor: ''
+    doctor: '',
+    timer: []
+  },
+  getters: {
+    timer: state => {
+      return state.timer
+    }
   },
   mutations: {
     updateLoadingStatus(state, payload) { // 加载中
@@ -14,6 +20,9 @@ const store = new Vuex.Store({
     },
     [type.DOCTOR](state, payload) {
       state.doctor = payload.doctor
+    },
+    [type.TIMER](state, payload) {
+      state.timer = payload.timer
     }
   }
 })

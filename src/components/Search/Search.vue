@@ -1,59 +1,60 @@
 <template lang="html">
 <div class="search">
-  <div class="header">搜索</div>
-  <search
-    @result-click="resultClick"
-    @on-change="getResult"
-    :results="results"
-    v-model="value"
-    :autoFixed="false"
-    @on-focus="onFocus"
-    @on-cancel="onCancel"
-    ref="search">
-  </search>
-  <section class="tabs-wrapper">
-    <div class="tabs-pane" v-for="(li,index) in tabList" @click="handleTabs(index)" :class="{'active': currentTab === index }">
-      <div class="tabs-text">{{li.title}}</div>
-    </div>
+  <section class="search-condition">
+    <div class="header">搜索</div>
+    <search
+      @result-click="resultClick"
+      @on-change="getResult"
+      :results="results"
+      v-model="value"
+      :autoFixed="false"
+      @on-focus="onFocus"
+      @on-cancel="onCancel"
+      ref="search">
+    </search>
+    <section class="tabs-wrapper">
+      <div class="tabs-pane" v-for="(li,index) in tabList" @click="handleTabs(index)" :class="{'active': currentTab === index }">
+        <div class="tabs-text">{{li.title}}</div>
+      </div>
+    </section>
+    <section class="dropdown-wrapper">
+      <div class="dropdown-item" v-for="(li,index) in dropdownList" :class="{'active': currentDropdown === index }" @click="handleDropdown(index)">
+        <div class="dropdown-title">{{li.title}} <i class="icon iconfont icon-up"></i></div>
+      </div>
+    </section>
   </section>
-  <section class="dropdown-wrapper">
-    <div class="dropdown-item" v-for="(li,index) in dropdownList" :class="{'active': currentDropdown === index }" @click="handleDropdown(index)">
-      <div class="dropdown-title">{{li.title}} <i class="icon iconfont icon-up"></i></div>
-    </div>
-  </section>
-  <section class="layer-wrapper" :class="{'layer-active': areaLayer === currentDropdown}">
-    <div class="layer-content area-layer">
-      <ul>
-        <li class="layer-cell" :class="{'active': currentArea === index}" v-for="(li,index) in areaList" @click="handleArea(li.text, index)">{{li.text}}</li>
-      </ul>
-    </div>
-  </section>
-  <section class="layer-wrapper" :class="{'layer-active': titleLayer === currentDropdown}">
-    <div class="layer-content title-layer">
-      <ul>
-        <li class="layer-cell" :class="{'active': currentTitle === index}" v-for="(li,index) in titleList" @click="handleTitle(li.text, index)">{{li.text}}</li>
-      </ul>
-    </div>
-  </section>
-  <section class="layer-wrapper" :class="{'layer-active': timeLayer === currentDropdown}">
-    <div class="layer-content time-layer">
-      <h2 class="layer-header">预约时间（可多选）</h2>
-      <div class="layer-time-wrapper">
-        <ul class="row">
-          <li class="week cell" v-for="li in weekData">{{li.text}}</li>
-        </ul>
-        <ul class="row" ref="am">
-          <li class="time cell am" @click="handleAm(li,index)" v-for="(li,index) in amData">{{li.text}} <i class="icon iconfont icon-gou"></i></li>
-        </ul>
-        <ul class="row" ref="pm">
-          <li class="time cell pm" @click="handlePm(li,index)" v-for="(li,index) in pmData">{{li.text}}<i class="icon iconfont icon-gou"></i></li>
+  <section class="search-layer">
+    <section class="layer-wrapper" :class="{'layer-active': areaLayer === currentDropdown}" @click.self="handleArea('区域', -1)">
+      <div class="layer-content area-layer">
+        <ul>
+          <li class="layer-cell" :class="{'active': currentArea === index}" v-for="(li,index) in areaList" @click.stop="handleArea(li.text, index)">{{li.text}}</li>
         </ul>
       </div>
-      <div class="btn-wrapper">
-        <div class="btn-cancel btn" @click="cancel">取消</div>
-        <div class="btn-confirm btn" @click="confirm">确定</div>
+    </section>
+    <section class="layer-wrapper" :class="{'layer-active': titleLayer === currentDropdown}" @click.self="handleTitle('医生职称', -1)">
+      <div class="layer-content title-layer">
+        <ul>
+          <li class="layer-cell" :class="{'active': currentTitle === index}" v-for="(li,index) in titleList" @click.stop="handleTitle(li.text, index)">{{li.text}}</li>
+        </ul>
       </div>
-    </div>
+    </section>
+    <section class="layer-wrapper" :class="{'layer-active': timeLayer === currentDropdown}" @click.self="cancel">
+      <div class="layer-content time-layer">
+        <h2 class="layer-header">预约时间（可多选）</h2>
+        <div class="layer-time-wrapper">
+          <ul class="row">
+            <li class="week cell" v-for="li in weekData">{{li.text}}</li>
+          </ul>
+          <ul class="row">
+            <li class="time cell" :class="[li.active ? 'active': '']" @click.stop="handleTimer(li)" v-for="li in timer">{{li.text}} <i class="icon iconfont icon-gou"></i></li>
+          </ul>
+        </div>
+        <div class="btn-wrapper">
+          <div class="btn-cancel btn" @click="cancel">取消</div>
+          <div class="btn-confirm btn" @click="confirm">确定</div>
+        </div>
+      </div>
+    </section>
   </section>
   <section class="content">
     <div class="nav-title">
@@ -65,21 +66,21 @@
         <div class="list-item-left">
           <img :src="li.url" class="item-img">
         </div>
-        <div class="list-item-right">
-          <div class="item-title-wrapper">
+        <dl class="list-item-right">
+          <dt class="item-title-wrapper">
             <span class="item-name">{{li.name}}</span>
             <span class="item-title">{{li.title}}</span>
             <span class="item-tag" v-if="li.tag">可咨询</span>
             <span class="item-num">预约量：{{li.num}}</span>
-          </div>
-          <div class="item-addr-wrapper">
+          </dt>
+          <dd class="item-addr-wrapper">
             <span class="item-addr">{{li.addr}}</span>
             <span class="item-office">{{li.office}}</span>
-          </div>
-          <div class="item-des-wrapper">
+          </dd>
+          <dd class="item-des-wrapper">
             <span class="item-des">擅长领域：{{li.des}}</span>
-          </div>
-        </div>
+          </dd>
+        </dl>
       </li>
     </ul>
   </section>
@@ -87,19 +88,6 @@
 </template>
 <script type="text/ecmascript-6">
   import { Search } from 'vux'
-  function hasClass(ele, cName) {
-    return !!ele.className.match(new RegExp('(\\s|^)' + cName + '(\\s|$)'))
-  }
-  function addClass(ele, cName) {
-    if (!hasClass(ele, cName)) {
-      ele.className += ' ' + cName
-    }
-  }
-  function removeClass(ele, cName) {
-    if (hasClass(ele, cName)) {
-      ele.className = ele.className.replace(new RegExp('(\\s|^)' + cName + '(\\s|$)'), '')
-    }
-  }
   export default{
     data() {
       return {
@@ -223,52 +211,63 @@
             text: '周五'
           }
         ],
-        amData: [
+        timer: [
           {
+            active: false,
             tag: '周一',
             text: '上午'
           },
           {
+            active: false,
             tag: '周二',
             text: '上午'
           },
           {
+            active: false,
             tag: '周三',
             text: '上午'
           },
           {
+            active: false,
             tag: '周四',
             text: '上午'
           },
           {
+            active: false,
             tag: '周五',
             text: '上午'
-          }
-        ],
-        pmData: [
+          },
           {
+            active: false,
             tag: '周一',
             text: '下午'
           },
           {
+            active: false,
             tag: '周二',
             text: '下午'
           },
           {
+            active: false,
             tag: '周三',
             text: '下午'
           },
           {
+            active: false,
             tag: '周四',
             text: '下午'
           },
           {
+            active: false,
             tag: '周五',
             text: '下午'
           }
-        ],
-        selectAm: [],
-        selectPm: []
+        ]
+      }
+    },
+    computed: {
+      selectTimer() {
+        return this.$store.getters.timer
       }
     },
     created() {},
@@ -278,14 +277,10 @@
         this.$router.push({name: 'Quiz'})
       },
       confirm() {
-        let am = this.selectAm
-        let pm = this.selectPm
+        let list = this.selectTimer
         let text = ''
-        for (let i = 0; i < am.length; i++) {
-          text += am[i].tag + am[i].text + ','
-        }
-        for (let i = 0; i < pm.length; i++) {
-          text += pm[i].tag + pm[i].text + ','
+        for (let i = 0; i < list.length; i++) {
+          text += list[i].tag + list[i].text + ','
         }
         if (text.length < 1) {
           alert(`请选择日期`)
@@ -295,52 +290,29 @@
         this.currentDropdown = -1
       },
       cancel() {
-        let am = this.$refs.am.getElementsByTagName('li')
-        let pm = this.$refs.pm.getElementsByTagName('li')
-        for (let i = 0; i < am.length; i++) {
-          removeClass(am[i], 'active')
+        // this.selectTimer = []
+        this.$store.commit('TIMER', {timer: []})
+        for (let i = 0; i < this.timer.length; i++) {
+          this.timer[i].active = false
         }
-        for (let i = 0; i < pm.length; i++) {
-          removeClass(pm[i], 'active')
-        }
-        this.selectAm = []
-        this.selectPm = []
         this.currentDropdown = -1
       },
-      handleAm(item, index) {
-        let list = this.selectAm
-        let cell = this.$refs.am.getElementsByTagName('li')[index]
-        console.log(cell)
+      handleTimer(item) {
+        let list = this.selectTimer
         let flag = false
         for (let i = 0; i < list.length; i++) {
-          if (list[i].tag === item.tag) {
-            list.splice(i, 1)
-            removeClass(cell, 'active')
+          if (list[i].tag === item.tag && list[i].text === item.text) {
+            list.splice(i, 1) // 从数组中取出
+            item.active = false // 设置class
             flag = true
           }
         }
         if (!flag) {
-          list.splice(list.length, 0, item)
-          addClass(cell, 'active')
+          item.active = true // 设置class
+          list.splice(list.length, 0, item) // 加入数组
         }
-        this.selectAm = list
-      },
-      handlePm(item, index) {
-        let list = this.selectPm
-        let cell = this.$refs.pm.getElementsByTagName('li')[index]
-        let flag = false
-        for (let i = 0; i < list.length; i++) {
-          if (list[i].tag === item.tag) {
-            list.splice(i, 1)
-            removeClass(cell, 'active')
-            flag = true
-          }
-        }
-        if (!flag) {
-          list.splice(list.length, 0, item)
-          addClass(cell, 'active')
-        }
-        this.selectPm = list
+        this.$store.commit('TIMER', {timer: list})
+        // this.selectTimer = list
       },
       handleArea(text, index) {
         this.currentDropdown = -1
@@ -356,7 +328,11 @@
         this.currentTab = index
       },
       handleDropdown(index) {
-        this.currentDropdown = index
+        if (this.currentDropdown === index) {
+          this.currentDropdown = -1
+        } else {
+          this.currentDropdown = index
+        }
       },
       // 搜索功能
       setFocus() {
@@ -384,12 +360,17 @@
 </script>
 <style lang="less" rel="stylesheet/less">
 @import url('../../common/less/index.less');
-.layer-wrapper{
-  position: fixed;
-  z-index: 666;
-  background-color: rgba(20, 20, 20, 0.5);
-  width: 100%;
+.search{
   height: 100%;
+}
+dl,dd{
+  margin: 0;
+}
+.layer-wrapper{
+  position: absolute;
+  z-index: 666;
+  background-color: rgba(20, 20, 20, 0.3);
+  width: 100%;
   visibility: hidden;
   .layer-content{
     padding: 0 10px;
@@ -440,14 +421,17 @@
       }
     }
     .row{
-      display: flex;
+      width: 100%;
+      font-size: 0;
       .cell{
-        flex: 1;
+        display: inline-block;
+        width: 20%;
         box-sizing: border-box;
         position: relative;
         line-height: 35px;
         text-align: center;
         over-flow: hidden;
+        font-size: 16px;
         .icon-gou{
           position: absolute;
           right: -2px;
@@ -515,17 +499,19 @@
       .list-item-left{
         flex: 0 0 75px;
         width: 75px;
-        padding: 10px 0;
+        margin: 10px 0;
         .item-img{
           width: 65px;
+          border-radius: 5px;
         }
       }
       .list-item-right{
         flex: 1;
-        padding: 10px 0;
+        margin: 10px 0;
         color: #696969;
         .item-name{
-          margin-right: 5px;
+          display: inline-block;
+          width: 50px;
           font-size: 16px;
           font-weight: 800;
           color: #333;
@@ -538,15 +524,19 @@
           background: #cde3f8;
           border-radius: 3px;
         }
-        .item-title,.item-addr,.item-office,.item-des,.item-num{
-          margin-right: 5px;
+        .item-title,.item-addr{
+          margin-right: 15px;
           font-size: 14px;
         }
         .item-des,.item-num{
           color:#bfbfbf;
         }
+        .item-des,.item-office{
+          font-size: 14px;
+        }
         .item-num{
           float: right;
+          font-size: 12px;
         }
       }
     }

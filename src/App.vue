@@ -33,6 +33,7 @@ export default {
 <style lang="less">
 #app {
   font-family: "PingFang SC",Arial,sans-serif;
+  overflow: hidden;
 }
 body {
   background-color: #eeeff3;
@@ -58,6 +59,9 @@ html, body {
     text-align: center;
     color: #fff;
   }
+}
+vux-loading{
+  z-index: 999;
 }
 .animated {
   animation-duration: 1s;
