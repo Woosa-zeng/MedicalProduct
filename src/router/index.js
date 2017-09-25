@@ -27,6 +27,8 @@ router.beforeEach(function(to, from, next) {
   next()
 })
 router.afterEach(function(to) {
-  store.commit('updateLoadingStatus', {isLoading: false})
+  setTimeout(function() {
+    store.commit('updateLoadingStatus', {isLoading: false})
+  }, 250)
 })
 export default router

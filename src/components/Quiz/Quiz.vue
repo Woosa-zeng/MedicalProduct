@@ -269,6 +269,7 @@
       transition: height 0.5s;
       .popover-list-active{
         background: #f4f4f4;
+        transform: translateY(-1px);
         .item{
           color: @base-blue;
           .icon{

@@ -1,9 +1,9 @@
 <template>
   <div id="app" style="height: 100%;">
-    <loading v-model="isLoading"></loading>
     <div class="app-content">
       <router-view></router-view>
     </div>
+    <loading v-model="isLoading"></loading>
   </div>
 </template>
 <script>
@@ -59,35 +59,5 @@ html, body {
     text-align: center;
     color: #fff;
   }
-}
-vux-loading{
-  z-index: 999;
-}
-.animated {
-  animation-duration: 1s;
-  animation-fill-mode: both;
-}
-@-webkit-keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 100%, 0);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 100%, 0);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-.fadeInUp {
-  animation-name: fadeInUp;
 }
 </style>
